@@ -16,13 +16,16 @@ import static org.lwjgl.opengl.GL11.glOrtho;
  * @author Jorge
  */
 public class InitializeGL {
+    private static final int DW2 = (DISPLAY_WIDTH/2);
+    private static final int DH2 = (DISPLAY_HEIGHT/2);
     
     public InitializeGL(){
         try{
             Display.setDisplayMode(new DisplayMode(DISPLAY_WIDTH, DISPLAY_HEIGHT));
             Display.setTitle("CS 445 Computer Graphics Project 2 - Jorge Luis Carrera");
             Display.create();
-            glOrtho(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT, 1, -1);
+            //glOrtho(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT, 1, -1);
+            glOrtho(-DW2, DW2, -DH2, DH2, 1, -1);
         }catch (Exception e){}
     }
     
