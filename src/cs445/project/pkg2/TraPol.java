@@ -15,7 +15,7 @@ import java.util.List;
 class TraPol {
     private float[] polyColor = new float[3];
     private List<int[]> polynom = new ArrayList();
-    private List<int[]> transfo = new ArrayList();
+    private List<float[]> transfo = new ArrayList();
     private List<String> tranType = new ArrayList();
     
     private void addTType(String type){
@@ -28,16 +28,20 @@ class TraPol {
         polynom.add(point);
     }
     
-    public void addTra(String type, int[] transformation){
+    public void addTra(String type, float[] transformation){
         addTType(type);
         transfo.add(transformation);
+    }
+    
+    public void addPolyColor(float[] x){
+        polyColor = x;
     }
     
     public int getPolySize(){
         return polynom.size();
     }
     
-    public int getTrabSize(){
+    public int getTranSize(){
         return transfo.size();
     }
     
@@ -45,12 +49,16 @@ class TraPol {
         return polynom.get(x);
     }
     
-    public int[] getTransPointAt(int x){
+    public float[] getTransPointAt(int x){
         return transfo.get(x);
     }
     
     public String getTransTypeAt(int x){
         return tranType.get(x);
+    }
+    
+    public float[] getPolyColor(){
+        return polyColor;
     }
     
     public void dumpData(){

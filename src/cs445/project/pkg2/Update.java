@@ -15,13 +15,14 @@ import static org.lwjgl.opengl.GL11.glEnd;
  * @author Jorge
  */
 public class Update {
+    InstructionPosting ip = new InstructionPosting();
 
     public Update() {
       while(!Display.isCloseRequested()){
           try{
-              glBegin(GL_POLYGON);
-              new InstructionPosting();
-              glEnd();
+              //glBegin(GL_POLYGON);
+              ip.initiate();
+              //glEnd();
               
               Display.update();
               Display.sync(60);

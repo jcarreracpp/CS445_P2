@@ -9,6 +9,8 @@ import static cs445.project.pkg2.CS445Project2.DISPLAY_HEIGHT;
 import static cs445.project.pkg2.CS445Project2.DISPLAY_WIDTH;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 
 /**
@@ -26,6 +28,7 @@ public class InitializeGL {
             Display.create();
             //glOrtho(0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT, 1, -1);
             glOrtho(-DW2, DW2, -DH2, DH2, 1, -1);
+            glMatrixMode(GL_MODELVIEW);
         }catch (Exception e){}
     }
     
