@@ -37,6 +37,14 @@ class TraPol {
         polyColor = x;
     }
     
+    public void setTransfo(List<float[]> tf){
+        transfo = tf;
+    }
+    
+    public void setTranType(List<String> s){
+        tranType = s;
+    }
+    
     public int getPolySize(){
         return polynom.size();
     }
