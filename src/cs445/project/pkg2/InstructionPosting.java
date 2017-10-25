@@ -5,6 +5,7 @@
  */
 package cs445.project.pkg2;
     
+import static cs445.project.pkg2.CS445Project2.toot;
 import java.util.ArrayList;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
@@ -51,6 +52,7 @@ public class InstructionPosting {
             setColor(input.get(i));
             glPushMatrix();
             applyTransform(input.get(i));
+            //dynamicRotate();
             drawPoints(input.get(i));
             glPopMatrix();
             //applyTransform(input.get(i));
@@ -61,16 +63,27 @@ public class InstructionPosting {
 
     }
 
+    private void dynamicRotate(){
+        if(toot > 360)
+            toot = -360;
+        glRotatef(toot, 0, 0, 1);
+        toot++;
+    }
     private void applyTransform(TraPol trpl) {
-        for(int k = trpl.getTranSize(); k >= 0; k--){
+        //glTranslatef(trpl.getHorizOffset(), trpl.getVertOffset(), 0.0f);
+
+        //for(int k = 0; k < trpl.getTranSize(); k++){
+        for(int k = trpl.getTranSize()-1; k >= 0; k--){
             if(trpl.getTransTypeAt(k).contains("t")){
                 glTranslatef(trpl.getTransPointAt(k)[0], trpl.getTransPointAt(k)[1], 0.0f);
             }else if(trpl.getTransTypeAt(k).contains("s")){
                 glScalef(trpl.getTransPointAt(k)[0], trpl.getTransPointAt(k)[1], trpl.getTransPointAt(k)[2]);
             }else if(trpl.getTransTypeAt(k).contains("r")){
-                glRotatef(trpl.getTransPointAt(k)[0], trpl.getTransPointAt(k)[1], trpl.getTransPointAt(k)[2], 0.0f);
+                glRotatef(trpl.getTransPointAt(k)[0], trpl.getTransPointAt(k)[1], trpl.getTransPointAt(k)[2], 1);
             }
         }
+        //glTranslatef(-trpl.getHorizOffset(), -trpl.getVertOffset(), 0.0f);
+
     }
 
     public void drawPoints(TraPol trpl) {

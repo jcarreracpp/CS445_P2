@@ -116,7 +116,8 @@ public class InstructionFiler {
         }catch(Exception e){
             e.printStackTrace();
         }
-        orgTrans();
+        //orgTrans();
+        allOffsetsCalc();
         return drawList;
     }
 
@@ -138,6 +139,12 @@ public class InstructionFiler {
             }
             drawList.get(i).setTransfo(tranBuffer);
             drawList.get(i).setTranType(typeBuffer);
+        }
+    }
+    
+    private void allOffsetsCalc(){
+        for(int i = 0; i < drawList.size(); i++){
+            drawList.get(i).calcOffset();
         }
     }
 }

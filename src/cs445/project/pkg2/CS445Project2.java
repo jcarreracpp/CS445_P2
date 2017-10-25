@@ -12,6 +12,7 @@ package cs445.project.pkg2;
 public class CS445Project2 {
   public static final int DISPLAY_HEIGHT = 480;
   public static final int DISPLAY_WIDTH = 640;
+  public static float toot = 0;
 
     /**
      * @param args the command line arguments

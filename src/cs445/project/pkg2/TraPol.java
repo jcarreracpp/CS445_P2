@@ -17,6 +17,8 @@ class TraPol {
     private List<int[]> polynom = new ArrayList();
     private List<float[]> transfo = new ArrayList();
     private List<String> tranType = new ArrayList();
+    private float horizOffset;
+    private float vertOffset;
     
     private void addTType(String type){
         tranType.add(type);
@@ -35,6 +37,37 @@ class TraPol {
     
     public void addPolyColor(float[] x){
         polyColor = x;
+    }
+    
+    public void calcOffset(){
+        float smx;
+        float smy;
+        float lrx;
+        float lry;
+        
+        if(polynom.size()==1){
+            horizOffset = polynom.get(0)[0];
+            horizOffset /= 2;
+            vertOffset = polynom.get(0)[1];
+            vertOffset /= 2;
+        }else{
+            smx = polynom.get(0)[0];
+            lrx = polynom.get(0)[0];
+            smy = polynom.get(0)[1];
+            lry = polynom.get(0)[1];
+            for(int i = 1; i < polynom.size(); i++){
+                if(polynom.get(i)[0] < smx)
+                    smx = polynom.get(i)[0];
+                if(polynom.get(i)[0] > lrx)
+                    lrx = polynom.get(i)[0];
+                if(polynom.get(i)[1] < smy)
+                    smy = polynom.get(i)[1];
+                if(polynom.get(i)[1] > lry)
+                    lry = polynom.get(i)[1];
+            }
+            horizOffset = ((smx + lrx)/2);
+            vertOffset = ((smy + lry)/2);
+        }
     }
     
     public void setTransfo(List<float[]> tf){
@@ -67,6 +100,14 @@ class TraPol {
     
     public float[] getPolyColor(){
         return polyColor;
+    }
+    
+    public float getVertOffset(){
+        return vertOffset;
+    }
+    
+    public float getHorizOffset(){
+        return horizOffset;
     }
     
     public void dumpData(){
