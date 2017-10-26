@@ -6,6 +6,7 @@
 package cs445.project.pkg2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ class TraPol {
     private float[] polyColor = new float[3];
     private List<int[]> polynom = new ArrayList();
     private List<float[]> transfo = new ArrayList();
+    private List<float[]> allEdgeTable = new ArrayList();
     private List<String> tranType = new ArrayList();
     private float horizOffset;
     private float vertOffset;
@@ -37,6 +39,62 @@ class TraPol {
     
     public void addPolyColor(float[] x){
         polyColor = x;
+    }
+    
+    public void organizeEdgesTable() {
+
+        for (int i = 0; i < allEdgeTable.size() - 1; i++) {
+            int minimum = i;
+            for (int j = i + 1; j < allEdgeTable.size(); j++) {
+                if (allEdgeTable.get(j)[0] != allEdgeTable.get(minimum)[0]) {
+                    if (allEdgeTable.get(j)[0] < allEdgeTable.get(minimum)[0]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else if (allEdgeTable.get(j)[2] != allEdgeTable.get(minimum)[2]) {
+                    if (allEdgeTable.get(j)[2] < allEdgeTable.get(minimum)[2]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else if (allEdgeTable.get(j)[1] != allEdgeTable.get(minimum)[1]) {
+                    if (allEdgeTable.get(j)[1] < allEdgeTable.get(minimum)[1]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else if (allEdgeTable.get(j)[3] != allEdgeTable.get(minimum)[3]) {
+                    if (allEdgeTable.get(j)[3] < allEdgeTable.get(minimum)[3]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else {
+                }
+            }
+            Collections.swap(allEdgeTable, i, minimum);
+        }
+    }
+    
+    public void calcEffectiveEdges(){
+        for(int i = 0; i < polynom.size(); i ++){
+            float[] newEdge = new float[4];
+            if(i == polynom.size()-1){
+                
+            }else{
+                if(polynom.get(i)[1] < polynom.get(i+1)[1]){
+                    newEdge[0] = polynom.get(i)[1];
+                    newEdge[1] = polynom.get(i+1)[1];
+                    newEdge[2] = polynom.get(i)[0];
+                }else{
+                    newEdge[0] = polynom.get(i+1)[1];
+                    newEdge[1] = polynom.get(i)[1];
+                    newEdge[2] = polynom.get(i+1)[0];
+                }
+                if(polynom.get(i)[1] - polynom.get(i+1)[1] == 0){
+                }else{
+                    newEdge[3] = ((polynom.get(i)[0] - polynom.get(i+1)[0]) / (polynom.get(i)[1] - polynom.get(i+1)[1]));
+                    allEdgeTable.add(newEdge);
+                }
+            }
+        }
     }
     
     public void calcOffset(){
@@ -76,6 +134,14 @@ class TraPol {
     
     public void setTranType(List<String> s){
         tranType = s;
+    }
+    
+    public float[] getAllEdgesTable(int i){
+        return allEdgeTable.get(i);
+    }
+    
+    public List<float[]> getTable(){
+        return allEdgeTable;
     }
     
     public int getPolySize(){

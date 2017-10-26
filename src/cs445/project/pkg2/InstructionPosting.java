@@ -7,6 +7,7 @@ package cs445.project.pkg2;
     
 import static cs445.project.pkg2.CS445Project2.toot;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_POLYGON;
@@ -49,18 +50,25 @@ public class InstructionPosting {
 
     public void drawPrimitives(List<TraPol> input) {
         for(int i = 0; i < input.size(); i++){
+            input.get(i).calcEffectiveEdges();
+            input.get(i).organizeEdgesTable();
             setColor(input.get(i));
             glPushMatrix();
             applyTransform(input.get(i));
             //dynamicRotate();
             drawPoints(input.get(i));
+            drawFill(input.get(i));            
             glPopMatrix();
-            //applyTransform(input.get(i));
+            //drawTraPol(input.get(i));
         }
     }
 
     private void drawTraPol(TraPol trpl) {
-
+        trpl.calcEffectiveEdges();
+        trpl.organizeEdgesTable();
+        for(int j = 0; j < trpl.getPolySize(); j++){
+            System.out.println("OWDWE"+j+": ["+trpl.getAllEdgesTable(j)[0]+"] ["+trpl.getAllEdgesTable(j)[1]+"] ["+trpl.getAllEdgesTable(j)[2]+"] ["+trpl.getAllEdgesTable(j)[3]+"]");
+        }
     }
 
     private void dynamicRotate(){
@@ -88,6 +96,7 @@ public class InstructionPosting {
 
     public void drawPoints(TraPol trpl) {
         glBegin(GL_POINTS);
+        
         for(int j = 0; j < trpl.getPolySize(); j++){
             //System.out.println("Point at "+ trpl.getPointAt(j)[0] + ", "+ trpl.getPointAt(j)[1]);
             if(j == trpl.getPolySize()-1){
@@ -97,6 +106,46 @@ public class InstructionPosting {
             }
         }
         glEnd();
+    }
+    
+    public void drawFill(TraPol trpl){
+        List<float[]> internal = new ArrayList();
+        List<float[]> active = new ArrayList();
+        float[] temp = new float[4];
+        float scanlinePos;
+        
+        internal = trpl.getTable();
+        scanlinePos = internal.get(0)[0];
+//        active.add(internal.get(0));
+//        scanlinePos = active.get(0)[0];
+//        internal.remove(0);
+        while(internal.size() > 0){
+            for(int j = 0; j < internal.size(); j++){
+                if(internal.get(j)[0] == scanlinePos){
+                    active.add(internal.get(0));
+                    internal.remove(0);
+                    j--;
+                }
+            }
+            if(active.size() > 0){
+                for(int i = 0; i < active.size(); i++){
+                    if(active.get(i)[1] == scanlinePos){
+                        active.remove(i);
+                        i--;
+                    }
+                }
+            }
+            active = organizeEdgesTable(active);
+            for(int k = 0; k < active.size(); k += 2){
+                loadLine((int)active.get(k)[2], scanlinePos, (int)active.get(k+1)[2], scanlinePos);
+            }
+            scanlinePos++;
+
+            for(int m = 0; m < active.size(); m++){
+                temp = active.get(m);
+                temp[2] = temp[2] + temp[3];
+            }
+        }
     }
 
     private void setColor(TraPol trpl) {
@@ -238,5 +287,38 @@ public class InstructionPosting {
         }
         }catch (Exception e){}
         vert = false;
+    }
+    
+    public List<float[]> organizeEdgesTable(List<float[]> lf) {
+
+        for (int i = 0; i < lf.size() - 1; i++) {
+            int minimum = i;
+            for (int j = i + 1; j < lf.size(); j++) {
+                if (lf.get(j)[0] != lf.get(minimum)[0]) {
+                    if (lf.get(j)[0] < lf.get(minimum)[0]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else if (lf.get(j)[2] != lf.get(minimum)[2]) {
+                    if (lf.get(j)[2] < lf.get(minimum)[2]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else if (lf.get(j)[1] != lf.get(minimum)[1]) {
+                    if (lf.get(j)[1] < lf.get(minimum)[1]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else if (lf.get(j)[3] != lf.get(minimum)[3]) {
+                    if (lf.get(j)[3] < lf.get(minimum)[3]) {
+                        minimum = j;
+                    } else {
+                    }
+                } else {
+                }
+            }
+            Collections.swap(lf, i, minimum);
+        }
+        return lf;
     }
 }

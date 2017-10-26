@@ -116,30 +116,9 @@ public class InstructionFiler {
         }catch(Exception e){
             e.printStackTrace();
         }
-        //orgTrans();
+        
         allOffsetsCalc();
         return drawList;
-    }
-
-    private void orgTrans() {
-        for(int i = 0; i < drawList.size(); i++){
-            List<float[]> tranBuffer = new ArrayList();
-            List<String> typeBuffer = new ArrayList();
-            for(int j = 0; j < drawList.get(i).getTranSize(); j++){
-                if(drawList.get(i).getTransTypeAt(j).contains("r") || drawList.get(i).getTransTypeAt(j).contains("s")){
-                    tranBuffer.add(drawList.get(i).getTransPointAt(j));
-                    typeBuffer.add(drawList.get(i).getTransTypeAt(j));
-                }
-            }
-            for(int k = 0; k < drawList.get(i).getTranSize(); k++){
-                if(drawList.get(i).getTransTypeAt(k).contains("t")){
-                    tranBuffer.add(drawList.get(i).getTransPointAt(k));
-                    typeBuffer.add(drawList.get(i).getTransTypeAt(k));
-                }
-            }
-            drawList.get(i).setTransfo(tranBuffer);
-            drawList.get(i).setTranType(typeBuffer);
-        }
     }
     
     private void allOffsetsCalc(){
