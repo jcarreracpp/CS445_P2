@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cs445.project.pkg2;
     
 import static cs445.project.pkg2.CS445Project2.toot;
@@ -10,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
-import static org.lwjgl.opengl.GL11.GL_POLYGON;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glPointSize;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
@@ -22,65 +17,65 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
 /**
- *
- * @author Jorge
+ * file: InstructionPosting.java
+ * author: Jorge Luis Carrera
+ * class: CS 445 - Computer Graphics
+ * 
+ * assignment: Program 2
+ * date last modified: 11/1/2017
+ * 
+ * purpose: This program takes input from a file, then applies transformations
+ * to a polygon given by points. The transformed polygons are then drawn.
  */
 public class InstructionPosting {
 
-    
+    //Method: InstructionPosting
+    //Purpose: Empty constructor to call other methods.
     public InstructionPosting() {
-        /**
-         * Heres where the actual instructions will be done,
-         * this class is probably going to call a file reader and get the 
-         * polygon's coords and transformations as array objects or as their own.
-         * Remember that transformations are applied FIRST, IN REVERSE, then
-         * the polygon vertices are plotted.
-         */
-
-
     }
     
+    //Method: initiate
+    //Purpose: Calls the instruction filer to read coordinates.txt and turn it
+    //into the appropriate amount of TraPol objects, then draws them.
     public void initiate(){
         InstructionFiler iF = new InstructionFiler();
         List<TraPol> instructionBank = new ArrayList();
         instructionBank = iF.processFile();
         drawPrimitives(instructionBank);
-        //System.out.println("IB " + instructionBank.size());
     }
 
+    //Method: drawPrimitives
+    //Purpose: Draws polygons that have had specific transformations applied to
+    //them using the scanline fill algorithm.
     public void drawPrimitives(List<TraPol> input) {
         for(int i = 0; i < input.size(); i++){
             input.get(i).calcEffectiveEdges();
             input.get(i).organizeEdgesTable();
+            glPointSize(1.5f);
             setColor(input.get(i));
             glPushMatrix();
             applyTransform(input.get(i));
             //dynamicRotate();
-            drawPoints(input.get(i));
             drawFill(input.get(i));            
             glPopMatrix();
-            //drawTraPol(input.get(i));
         }
     }
 
-    private void drawTraPol(TraPol trpl) {
-        trpl.calcEffectiveEdges();
-        trpl.organizeEdgesTable();
-        for(int j = 0; j < trpl.getPolySize(); j++){
-            System.out.println("OWDWE"+j+": ["+trpl.getAllEdgesTable(j)[0]+"] ["+trpl.getAllEdgesTable(j)[1]+"] ["+trpl.getAllEdgesTable(j)[2]+"] ["+trpl.getAllEdgesTable(j)[3]+"]");
-        }
-    }
-
+    //Method: dynamicRotate
+    //Purpose: Initially used to debug the rotation transformation, this
+    //applies a real time spin to the polygons.
     private void dynamicRotate(){
         if(toot > 360)
             toot = -360;
         glRotatef(toot, 0, 0, 1);
-        toot++;
+        toot ++;
     }
+    
+    //Method: applyTransform
+    //Purpose: Reads all the transformations from a given TraPol object and
+    //applies them in reverse order.
     private void applyTransform(TraPol trpl) {
-        //glTranslatef(trpl.getHorizOffset(), trpl.getVertOffset(), 0.0f);
-
-        //for(int k = 0; k < trpl.getTranSize(); k++){
+        
         for(int k = trpl.getTranSize()-1; k >= 0; k--){
             if(trpl.getTransTypeAt(k).contains("t")){
                 glTranslatef(trpl.getTransPointAt(k)[0], trpl.getTransPointAt(k)[1], 0.0f);
@@ -90,15 +85,14 @@ public class InstructionPosting {
                 glRotatef(trpl.getTransPointAt(k)[0], trpl.getTransPointAt(k)[1], trpl.getTransPointAt(k)[2], 1);
             }
         }
-        //glTranslatef(-trpl.getHorizOffset(), -trpl.getVertOffset(), 0.0f);
-
     }
 
+    //Method: drawPoints
+    //Purpose: Draws a border of the polygon based on vertices.
     public void drawPoints(TraPol trpl) {
         glBegin(GL_POINTS);
         
         for(int j = 0; j < trpl.getPolySize(); j++){
-            //System.out.println("Point at "+ trpl.getPointAt(j)[0] + ", "+ trpl.getPointAt(j)[1]);
             if(j == trpl.getPolySize()-1){
                 loadLine(trpl.getPointAt(j)[0],trpl.getPointAt(j)[1], trpl.getPointAt(0)[0], trpl.getPointAt(0)[1]);
             }else{
@@ -108,18 +102,22 @@ public class InstructionPosting {
         glEnd();
     }
     
+    //Method: drawFill
+    //Purpose: Takes the edgetable calculated from a TraPol object and applies
+    //the scanline fill algorithm.
     public void drawFill(TraPol trpl){
         List<float[]> internal = new ArrayList();
         List<float[]> active = new ArrayList();
         float[] temp = new float[4];
-        float scanlinePos;
+        float scanlinePos = 0;
         
         internal = trpl.getTable();
         scanlinePos = internal.get(0)[0];
-//        active.add(internal.get(0));
-//        scanlinePos = active.get(0)[0];
-//        internal.remove(0);
-        while(internal.size() > 0){
+
+        glBegin(GL_POINTS);
+        while(internal.size() > 0 || active.size() > 0){
+
+            //Adding to active table from global table
             for(int j = 0; j < internal.size(); j++){
                 if(internal.get(j)[0] == scanlinePos){
                     active.add(internal.get(0));
@@ -127,27 +125,36 @@ public class InstructionPosting {
                     j--;
                 }
             }
+            //Removing from active based on y max.
             if(active.size() > 0){
                 for(int i = 0; i < active.size(); i++){
-                    if(active.get(i)[1] == scanlinePos){
+                    if(active.get(i)[1] <= scanlinePos){
                         active.remove(i);
                         i--;
                     }
                 }
             }
             active = organizeEdgesTable(active);
+            //Draws the line.
             for(int k = 0; k < active.size(); k += 2){
                 loadLine((int)active.get(k)[2], scanlinePos, (int)active.get(k+1)[2], scanlinePos);
             }
+            
             scanlinePos++;
 
+            //Updates x.
             for(int m = 0; m < active.size(); m++){
                 temp = active.get(m);
                 temp[2] = temp[2] + temp[3];
+                active.set(m, temp);
             }
         }
+        glEnd();
     }
 
+    //Method: setColor
+    //Purpose: Takes the color value from a given TraPol object and makes it
+    // the vertex color.
     private void setColor(TraPol trpl) {
         glColor3f(trpl.getPolyColor()[0],trpl.getPolyColor()[1],trpl.getPolyColor()[2]);
     }
@@ -155,7 +162,7 @@ public class InstructionPosting {
     //Method: loadLine
     //Purpose: Receives input and draws a line based on the two endpoints. 
     //Points are modified to draw starting from the left, and can detect if
-    //slope is positive or negative, and also greater than 1.
+    //slope is positive or negative, and also greater/less than 1.
     public void loadLine(float coord1, float coord2, float coord3, float coord4){
         float c1 = coord1;
         float c2 = coord2;
@@ -163,9 +170,7 @@ public class InstructionPosting {
         float c4 = coord4;
         float slope = 0;
         boolean vert = false;
-        
-        //glColor3f(1.0f, 0.0f, 0.0f);
-        
+                
         try{
         
         if(c1 > c3){
@@ -289,17 +294,15 @@ public class InstructionPosting {
         vert = false;
     }
     
+    //Method: organizeEdgesTable
+    //Purpose: Organizes an edgetable passed by x-val first, then y-max, then
+    //slope. This is done to properly draw the scanline fill.
     public List<float[]> organizeEdgesTable(List<float[]> lf) {
 
         for (int i = 0; i < lf.size() - 1; i++) {
             int minimum = i;
             for (int j = i + 1; j < lf.size(); j++) {
-                if (lf.get(j)[0] != lf.get(minimum)[0]) {
-                    if (lf.get(j)[0] < lf.get(minimum)[0]) {
-                        minimum = j;
-                    } else {
-                    }
-                } else if (lf.get(j)[2] != lf.get(minimum)[2]) {
+                    if (lf.get(j)[2] != lf.get(minimum)[2]) {
                     if (lf.get(j)[2] < lf.get(minimum)[2]) {
                         minimum = j;
                     } else {
